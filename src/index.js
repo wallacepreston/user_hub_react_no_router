@@ -20,9 +20,17 @@ import {
   getTodosByUser
 } from './api';
 
+
+
+import {
+  getCurrentUser
+} from './auth';
+
+
+
 const App = () => {
   const [userList, setUserList] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(getCurrentUser());
   const [userPosts, setUserPosts] = useState([]);
   const [userTodos, setUserTodos] = useState([]);
 
@@ -106,31 +114,8 @@ const App = () => {
 }
 
 
+
   
-
-  return (
-    <div id="App">
-      <Header
-        userList={ userList }
-        currentUser={ currentUser }
-        setCurrentUser={ setCurrentUser } />
-      {
-        currentUser
-          ? <>
-            <UserPosts
-              userPosts={ userPosts }
-              currentUser={ currentUser } />
-            <UserTodos
-              userTodos={ userTodos }
-              currentUser={ currentUser } />
-          </>
-          : null
-      }
-
-    </div>
-  );
-
-
 ReactDOM.render(
   <App />,
   document.getElementById('root')
