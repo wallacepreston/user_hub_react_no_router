@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
 
 import './Header.css';
 
@@ -40,7 +41,11 @@ const Header = ({
         onSubmit={ handleSubmit } >
         {
           currentUser
-            ? <button onClick={ handleUserLogout }>LOG OUT, { currentUser.username }</button>
+            ? <>
+              <NavLink to="/posts" activeClassName="current">POSTS</NavLink>
+              <NavLink to="/todos" activeClassName="current">TODOS</NavLink>
+              <button onClick={ handleUserLogout }>LOG OUT, { currentUser.username }</button>
+              </>
             : <>
               <select onChange={ handleSelectChange }>{
                 userList.map(user => (
