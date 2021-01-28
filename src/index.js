@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
 import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect
+} from 'react-router-dom';
+
+import {
   Header,
   UserPosts,
   UserTodos
@@ -13,9 +20,17 @@ import {
   getTodosByUser
 } from './api';
 
+// NEW
+import {
+  getCurrentUser
+} from './auth';
+
 const App = () => {
   const [userList, setUserList] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null);
+
+  // MODIFIED
+  const [currentUser, setCurrentUser] = useState(getCurrentUser());
+
   const [userPosts, setUserPosts] = useState([]);
   const [userTodos, setUserTodos] = useState([]);
 
@@ -25,7 +40,7 @@ const App = () => {
         setUserList(users)
       })
       .catch(error => {
-        console.error(error);
+        // something something errors
       });
   }, []);
 
@@ -41,7 +56,7 @@ const App = () => {
         setUserPosts(posts);
       })
       .catch(error => {
-        console.error(error);
+        // something something errors
       });
 
     getTodosByUser(currentUser.id)
@@ -49,30 +64,52 @@ const App = () => {
         setUserTodos(todos);
       })
       .catch(error => {
-        console.error(error);
+        // something something errors
       });
   }, [currentUser]);
 
   return (
-    <div id="App">
-      <Header
-        userList={ userList }
-        currentUser={ currentUser }
-        setCurrentUser={ setCurrentUser } />
-      {
-        currentUser
+    <Router>
+      <div id="App">
+        <Header
+          userList={ userList }
+          currentUser={ currentUser }
+          setCurrentUser={ setCurrentUser } />
+        {
+          currentUser
           ? <>
-            <UserPosts
-              userPosts={ userPosts }
-              currentUser={ currentUser } />
-            <UserTodos
-              userTodos={ userTodos }
-              currentUser={ currentUser } />
-          </>
-          : null
-      }
-
-    </div>
+              <Switch>
+                <Route path="/posts">
+                  <UserPosts
+                    userPosts={ userPosts }
+                    currentUser={ currentUser } />
+                </Route>
+                <Route path="/todos">
+                  <UserTodos
+                    userTodos={ userTodos }
+                    currentUser={ currentUser } />
+                </Route>
+                <Route exact path="/">
+                  <h2 style={{
+                    padding: ".5em"
+                  }}>Welcome, { currentUser.username }!</h2>
+                </Route>
+                <Redirect to="/" />
+              </Switch>
+            </>
+          : <>
+              <Switch>
+                <Route exact path="/">
+                  <h2 style={{
+                    padding: ".5em"
+                  }}>Please log in, above.</h2>
+                </Route>
+                <Redirect to="/" />
+              </Switch>
+            </>
+        }
+      </div>
+    </Router>
   );
 }
 

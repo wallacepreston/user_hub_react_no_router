@@ -1,17 +1,24 @@
 import React, { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
+
+// NEW
+import {
+  storeCurrentUser,
+  clearCurrentUser
+} from '../auth';
 
 import './Header.css';
 
 const Header = ({
   currentUser,
   setCurrentUser,
-  userList 
+  userList
 }) => {
   const [selectedUser, setSelectedUser] = useState();
 
   useEffect(() => {
     setSelectedUser(userList[0]);
-  }, [userList]);
+  }, [ userList ]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -24,24 +31,30 @@ const Header = ({
   }
 
   const handleUserLogin = (event) => {
+    storeCurrentUser(selectedUser); // NEW
     setCurrentUser(selectedUser);
   }
 
   const handleUserLogout = (event) => {
     setSelectedUser(userList[0]);
+    clearCurrentUser(); // NEW
     setCurrentUser(null);
   }
 
   return (
     <header>
       <h1>Welcome to UserHub</h1>
-      <form 
-        className="user-select" 
+      <form
+        className="user-select"
         onSubmit={ handleSubmit } >
         {
           currentUser
-            ? <button onClick={ handleUserLogout }>LOG OUT, { currentUser.username }</button>
-            : <>
+          ? <>
+              <NavLink to="/posts" activeClassName="current">POSTS</NavLink>
+              <NavLink to="/todos" activeClassName="current">TODOS</NavLink >
+              <button onClick={ handleUserLogout }>LOG OUT, { currentUser.username }</button>
+            </>
+          : <>
               <select onChange={ handleSelectChange }>{
                 userList.map(user => (
                   <option key={ user.id } value={ user.id }>
